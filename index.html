@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#490e6f" />
+  <title>EMS Student Leaders — MLC Handbooks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:      #0a0014;
+      --card:    #120020;
+      --purple:  #490e6f;
+      --gold:    #ffe100;
+      --text:    #f5f0ff;
+      --muted:   #9b7fc0;
+      --border:  rgba(73,14,111,0.5);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', system-ui, sans-serif;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    canvas#stars {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+      background: rgba(10,0,20,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--gold); }
+    .nav-back svg { flex-shrink: 0; }
+    .nav-title {
+      font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+    .nav-spacer { width: 120px; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      max-width: 1100px; margin: 0 auto;
+      padding: 5rem 2rem 4rem;
+      min-height: calc(100dvh - 64px);
+    }
+    .hero-left { max-width: 520px; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(255,225,0,0.08);
+      border: 1px solid rgba(255,225,0,0.22);
+      border-radius: 20px; padding: 4px 14px 4px 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .tag-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold);
+      animation: dot-pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes dot-pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.75); }
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 900; line-height: 1.02;
+      letter-spacing: -0.025em;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 .accent {
+      background: linear-gradient(135deg, #f5f0ff 0%, #c084fc 35%, #ffe100 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 28px rgba(255,225,0,0.18));
+    }
+    .hero-sub {
+      font-size: 1.05rem; color: var(--muted);
+      line-height: 1.65; max-width: 400px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold);
+      color: var(--purple);
+      font-weight: 900; font-size: 0.88rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.8rem 1.75rem; border-radius: 28px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .hero-cta:hover { opacity: 0.88; transform: translateY(-2px); }
+
+    /* ── BRANCHING SVG VISUAL ── */
+    .hero-visual {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .branch-svg {
+      width: 100%; max-width: 420px;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 30px rgba(255,225,0,0.12));
+    }
+
+    /* ── TRACK GRID ── */
+    .tracks-section {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 1rem 2rem 6rem;
+    }
+    .tracks-section h2 {
+      font-size: 1rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      margin-bottom: 1.5rem;
+    }
+    .track-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      grid-template-rows: auto auto;
+      gap: 1rem;
+    }
+    .track-card {
+      position: relative; overflow: hidden;
+      background: var(--card);
+      border: 1px solid rgba(73,14,111,0.45);
+      border-radius: 20px;
+      padding: 1.75rem;
+      text-decoration: none; color: inherit;
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1),
+                  border-color 0.22s, box-shadow 0.22s;
+      display: flex; flex-direction: column; justify-content: space-between;
+      min-height: 200px;
+    }
+    .track-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--tc, var(--gold));
+      box-shadow: 0 0 32px color-mix(in srgb, var(--tc, var(--gold)) 30%, transparent),
+                  0 12px 40px rgba(0,0,0,0.5);
+    }
+    .track-card::before {
+      content: '';
+      position: absolute; top: -30px; left: -30px;
+      width: 120px; height: 120px; border-radius: 50%;
+      background: var(--tc, var(--gold));
+      opacity: 0.08; filter: blur(32px);
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .track-card:hover::before { opacity: 0.18; }
+
+    .tc-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--tc, var(--gold));
+      background: color-mix(in srgb, var(--tc, var(--gold)) 14%, transparent);
+      border: 1px solid color-mix(in srgb, var(--tc, var(--gold)) 30%, transparent);
+      border-radius: 12px; padding: 2px 9px;
+      margin-bottom: 0.9rem; width: fit-content;
+    }
+    .tc-name {
+      font-size: 1.35rem; font-weight: 800; line-height: 1.15;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+    .tc-role {
+      font-size: 0.8rem; color: var(--muted);
+      margin-bottom: 1rem; line-height: 1.5;
+    }
+    .tc-arrow {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--tc, var(--gold));
+      opacity: 0.6; transition: opacity 0.2s, transform 0.2s;
+    }
+    .track-card:hover .tc-arrow { opacity: 1; transform: translateX(4px); }
+
+    /* card layout positions */
+    .tc-generals    { --tc: #ffe100; grid-row: 1; grid-column: 1; }
+    .tc-ambassadors { --tc: #06b6d4; grid-row: 1; grid-column: 2; }
+    .tc-delegates   { --tc: #10b981; grid-row: 2; grid-column: 1 / span 2; flex-direction: row; align-items: center; gap: 2rem; min-height: 160px; }
+    .tc-vanguard    { --tc: #f59e0b; grid-row: 3; grid-column: 1 / span 2; }
+
+    .tc-delegates .tc-body { flex: 1; }
+    .tc-delegates .tc-aside {
+      flex-shrink: 0;
+      font-size: 3rem; font-weight: 900; line-height: 1;
+      color: #10b981; opacity: 0.15;
+      font-family: 'DM Mono', monospace;
+      white-space: nowrap;
+    }
+    .tc-vanguard { flex-direction: row; align-items: center; gap: 2rem; }
+    .tc-vanguard .tc-body { flex: 1; }
+    .tc-vanguard .tc-vtext {
+      flex-shrink: 0;
+      font-size: 3rem; font-weight: 900; line-height: 1;
+      color: #f59e0b; opacity: 0.15;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ── MLC OVERVIEW BAND ── */
+    .mlc-band {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+    .mlc-card {
+      background: linear-gradient(135deg, rgba(8,145,178,0.12), rgba(73,14,111,0.18));
+      border: 1px solid rgba(8,145,178,0.28);
+      border-radius: 20px; padding: 2rem 2.5rem;
+      display: flex; align-items: center; gap: 2.5rem;
+      text-decoration: none; color: inherit;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .mlc-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 40px rgba(8,145,178,0.18), 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .mlc-icon {
+      width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+      background: rgba(8,145,178,0.18); border: 1px solid rgba(8,145,178,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+    }
+    .mlc-text h3 {
+      font-size: 1.1rem; font-weight: 800; margin-bottom: 0.3rem; color: #67e8f9;
+    }
+    .mlc-text p { font-size: 0.85rem; color: var(--muted); line-height: 1.55; }
+    .mlc-arrow {
+      margin-left: auto; flex-shrink: 0;
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #06b6d4; opacity: 0.65;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .mlc-card:hover .mlc-arrow { opacity: 1; transform: translateX(4px); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-1 { animation: fade-in-up 0.7s ease both; }
+    .fade-2 { animation: fade-in-up 0.7s ease 0.12s both; }
+    .fade-3 { animation: fade-in-up 0.7s ease 0.22s both; }
+    .fade-4 { animation: fade-in-up 0.7s ease 0.32s both; }
+    .fade-5 { animation: fade-in-up 0.7s ease 0.42s both; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
+      .nav-spacer { display: none; }
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 3rem 1.25rem 2rem;
+        min-height: auto; gap: 2rem;
+      }
+      .hero-visual { display: none; }
+      .track-grid { grid-template-columns: 1fr; }
+      .tc-generals    { grid-column: 1; }
+      .tc-ambassadors { grid-column: 1; }
+      .tc-delegates   { grid-column: 1; flex-direction: column; }
+      .tc-delegates .tc-aside { display: none; }
+      .tc-vanguard    { grid-column: 1; flex-direction: column; }
+      .tc-vanguard .tc-vtext { display: none; }
+      .tracks-section, .mlc-band { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .mlc-card { flex-direction: column; gap: 1rem; }
+      .mlc-arrow { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<nav>
+  <a href="https://bit.ly/emsmountain" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    The Mountain
+  </a>
+  <span class="nav-title">EMS Student Leaders</span>
+  <div class="nav-spacer"></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag fade-1">
+      <span class="tag-dot"></span>
+      Mountaineer Leadership Corps
+    </div>
+    <h1 class="fade-2">
+      <span class="accent">Student Voice</span><br>
+      &amp; Leadership
+    </h1>
+    <p class="hero-sub fade-3">
+      Five tracks. One shared mission. Every path connects to the Life Ready Graduate we build together at East Mifflin.
+    </p>
+    <a href="#tracks" class="hero-cta fade-4">
+      Select Your Track
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="hero-visual fade-5" aria-hidden="true">
+    <svg class="branch-svg" viewBox="0 0 400 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Central trunk -->
+      <line x1="200" y1="400" x2="200" y2="200" stroke="#490e6f" stroke-width="2.5" opacity="0.6"/>
+      <!-- Main branches -->
+      <line x1="200" y1="200" x2="80"  y2="100" stroke="#490e6f" stroke-width="2" opacity="0.5"/>
+      <line x1="200" y1="200" x2="150" y2="80"  stroke="#490e6f" stroke-width="2" opacity="0.5"/>
+      <line x1="200" y1="200" x2="200" y2="60"  stroke="#490e6f" stroke-width="2" opacity="0.5"/>
+      <line x1="200" y1="200" x2="260" y2="80"  stroke="#490e6f" stroke-width="2" opacity="0.5"/>
+      <line x1="200" y1="200" x2="320" y2="100" stroke="#490e6f" stroke-width="2" opacity="0.5"/>
+      <!-- Sub-branches left -->
+      <line x1="80"  y1="100" x2="40"  y2="50"  stroke="#ffe100" stroke-width="1.5" opacity="0.4"/>
+      <line x1="80"  y1="100" x2="60"  y2="40"  stroke="#ffe100" stroke-width="1.5" opacity="0.3"/>
+      <line x1="150" y1="80"  x2="120" y2="30"  stroke="#06b6d4" stroke-width="1.5" opacity="0.4"/>
+      <line x1="150" y1="80"  x2="140" y2="20"  stroke="#06b6d4" stroke-width="1.5" opacity="0.3"/>
+      <!-- Sub-branches center -->
+      <line x1="200" y1="60"  x2="190" y2="20"  stroke="#10b981" stroke-width="1.5" opacity="0.4"/>
+      <line x1="200" y1="60"  x2="215" y2="18"  stroke="#10b981" stroke-width="1.5" opacity="0.35"/>
+      <!-- Sub-branches right -->
+      <line x1="260" y1="80"  x2="270" y2="28"  stroke="#f59e0b" stroke-width="1.5" opacity="0.4"/>
+      <line x1="320" y1="100" x2="340" y2="46"  stroke="#f59e0b" stroke-width="1.5" opacity="0.35"/>
+      <line x1="320" y1="100" x2="360" y2="58"  stroke="#f59e0b" stroke-width="1.5" opacity="0.3"/>
+      <!-- Track nodes -->
+      <circle cx="80"  cy="100" r="10" fill="#ffe100" opacity="0.18"/>
+      <circle cx="80"  cy="100" r="5"  fill="#ffe100" opacity="0.7"/>
+      <circle cx="150" cy="80"  r="10" fill="#06b6d4" opacity="0.18"/>
+      <circle cx="150" cy="80"  r="5"  fill="#06b6d4" opacity="0.7"/>
+      <circle cx="200" cy="60"  r="10" fill="#10b981" opacity="0.18"/>
+      <circle cx="200" cy="60"  r="5"  fill="#10b981" opacity="0.7"/>
+      <circle cx="260" cy="80"  r="10" fill="#f59e0b" opacity="0.18"/>
+      <circle cx="260" cy="80"  r="5"  fill="#f59e0b" opacity="0.7"/>
+      <circle cx="320" cy="100" r="10" fill="#0891b2" opacity="0.18"/>
+      <circle cx="320" cy="100" r="5"  fill="#0891b2" opacity="0.7"/>
+      <!-- Root nodes -->
+      <circle cx="200" cy="200" r="16" fill="#6b1fa3" opacity="0.3"/>
+      <circle cx="200" cy="200" r="8"  fill="#9333ea" opacity="0.7"/>
+      <circle cx="200" cy="200" r="3"  fill="#ffe100"/>
+      <!-- Leaf tips -->
+      <circle cx="40"  cy="50"  r="3.5" fill="#ffe100" opacity="0.5"/>
+      <circle cx="60"  cy="40"  r="3"   fill="#ffe100" opacity="0.4"/>
+      <circle cx="120" cy="30"  r="3.5" fill="#06b6d4" opacity="0.5"/>
+      <circle cx="140" cy="20"  r="3"   fill="#06b6d4" opacity="0.4"/>
+      <circle cx="190" cy="20"  r="3"   fill="#10b981" opacity="0.5"/>
+      <circle cx="215" cy="18"  r="3"   fill="#10b981" opacity="0.4"/>
+      <circle cx="270" cy="28"  r="3.5" fill="#f59e0b" opacity="0.5"/>
+      <circle cx="340" cy="46"  r="3.5" fill="#f59e0b" opacity="0.5"/>
+      <circle cx="360" cy="58"  r="3"   fill="#f59e0b" opacity="0.4"/>
+      <!-- Firefly glow animations -->
+      <circle cx="80" cy="100" r="14" fill="#ffe100" opacity="0">
+        <animate attributeName="opacity" values="0;0.12;0" dur="2.8s" begin="0s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="14;20;14" dur="2.8s" begin="0s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="200" cy="60" r="14" fill="#10b981" opacity="0">
+        <animate attributeName="opacity" values="0;0.14;0" dur="3.2s" begin="0.6s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="14;20;14" dur="3.2s" begin="0.6s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="320" cy="100" r="14" fill="#0891b2" opacity="0">
+        <animate attributeName="opacity" values="0;0.12;0" dur="2.5s" begin="1.2s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="14;20;14" dur="2.5s" begin="1.2s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Track labels -->
+      <text x="52" y="97" fill="#ffe100" font-size="9" font-family="monospace" font-weight="700" opacity="0.7">GENERALS</text>
+      <text x="100" y="72" fill="#06b6d4" font-size="9" font-family="monospace" font-weight="700" opacity="0.7">AMBASSADORS</text>
+      <text x="172" y="54" fill="#10b981" font-size="9" font-family="monospace" font-weight="700" opacity="0.7">DELEGATES</text>
+      <text x="265" y="70" fill="#f59e0b" font-size="9" font-family="monospace" font-weight="700" opacity="0.7">VANGUARD</text>
+    </svg>
+  </div>
+</section>
+
+<!-- TRACK CARDS -->
+<section class="tracks-section" id="tracks">
+  <h2>Choose Your Track</h2>
+
+  <div class="track-grid">
+
+    <!-- Generals -->
+    <a href="generals/" class="track-card tc-generals fade-1">
+      <div>
+        <div class="tc-tag">Track 1</div>
+        <div class="tc-name">Squad Generals</div>
+        <div class="tc-role">Generals &amp; Captains — year-round squad leadership, Clash of Classes, LRG trait focus</div>
+      </div>
+      <div class="tc-arrow">
+        Open Handbook
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </a>
+
+    <!-- Ambassadors -->
+    <a href="ambassadors/" class="track-card tc-ambassadors fade-2">
+      <div>
+        <div class="tc-tag">Track 2</div>
+        <div class="tc-name">Ambassadors</div>
+        <div class="tc-role">Peer-elected 8th graders + Pathfinders — own the new student experience from Day 1 through belonging</div>
+      </div>
+      <div class="tc-arrow">
+        Open Handbook
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </a>
+
+    <!-- Delegates -->
+    <a href="delegates/" class="track-card tc-delegates fade-3">
+      <div class="tc-body">
+        <div class="tc-tag">Track 3</div>
+        <div class="tc-name">Delegates</div>
+        <div class="tc-role">Student Council reimagined — gather student voice, facilitate lessons, connect with Generals, drive a real service project</div>
+        <div class="tc-arrow" style="margin-top: 1rem;">
+          Open Handbook
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tc-aside">DEL</div>
+    </a>
+
+    <!-- Vanguard -->
+    <a href="vanguard/" class="track-card tc-vanguard fade-4">
+      <div class="tc-body">
+        <div class="tc-tag">Standalone</div>
+        <div class="tc-name">Vanguard</div>
+        <div class="tc-role">Trailback Panel members — restorative alternative to traditional discipline, focused on reflection and reconnection</div>
+        <div class="tc-arrow" style="margin-top: 1rem;">
+          Open Handbook
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="tc-vtext">VAN</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- MLC OVERVIEW -->
+<div class="mlc-band">
+  <a href="https://docs.google.com/document/d/1IiUT0W1rpREqMdoWrHuVbziU8R9pqXOthQo3_1lIiqk/preview" target="_blank" rel="noopener noreferrer" class="mlc-card fade-5">
+    <div class="mlc-icon">&#127968;</div>
+    <div class="mlc-text">
+      <h3>MLC Overview Handbook</h3>
+      <p>All five tracks, shared mission, selection processes, and the Life Ready Graduate framework connecting them all. Start here if you're new.</p>
+    </div>
+    <div class="mlc-arrow">
+      Open
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </a>
+</div>
+
+<script>
+  // Stars canvas
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  function drawStars() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < 160; i++) {
+      const x = (i * 137.508 + 17) % canvas.width;
+      const y = (i * 83.1   + 31) % (canvas.height * 0.85);
+      const r = 0.3 + (i % 4) * 0.15;
+      ctx.globalAlpha = 0.1 + (i % 6) * 0.04;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = i % 4 === 0 ? '#ffe100' : '#c084fc';
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  drawStars();
+  window.addEventListener('resize', drawStars);
+</script>
+</body>
+</html>

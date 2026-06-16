@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="theme-color" content="#490e6f" />
+  <title>Vanguard Handbook — EMS Student Leaders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#0a0014;--card:#120020;--text:#f5f0ff;--muted:#9b7fc0;--border:rgba(73,14,111,0.5);--tc:#f59e0b;--tc-dim:rgba(245,158,11,0.09);--tc-border:rgba(245,158,11,0.28);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Outfit',system-ui,sans-serif;}
+    body{display:flex;flex-direction:column;min-height:100dvh;}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;background:rgba(10,0,20,0.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+    .nav-back{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color 0.2s;}
+    .nav-back:hover{color:var(--tc);}
+    .nav-title{font-size:0.75rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--tc);font-family:'DM Mono',monospace;}
+    .nav-edit-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:inherit;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;border-radius:16px;padding:5px 14px;cursor:pointer;transition:all 0.2s;}
+    .nav-edit-btn:hover{border-color:var(--tc);color:var(--tc);}
+    .track-header{background:linear-gradient(135deg,var(--tc-dim),transparent);border-bottom:1px solid var(--tc-border);padding:2.5rem 2rem 2rem;}
+    .track-header-inner{max-width:900px;margin:0 auto;}
+    .th-track{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--tc);margin-bottom:0.5rem;}
+    .th-name{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;letter-spacing:-0.02em;color:var(--text);margin-bottom:0.4rem;}
+    .th-role{font-size:0.88rem;color:var(--muted);margin-bottom:1.25rem;}
+    .color-bar{width:48px;height:3px;background:var(--tc);border-radius:2px;}
+    .main{flex:1;display:flex;flex-direction:column;}
+    .url-editor{max-width:900px;margin:1.25rem auto;padding:0 2rem;width:100%;}
+    .url-row{display:flex;align-items:center;gap:10px;}
+    .url-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);flex-shrink:0;}
+    #url-input{flex:1;padding:0.5rem 0.85rem;border-radius:9px;border:1.5px solid var(--border);background:rgba(0,0,0,0.35);color:var(--text);font-size:0.8rem;font-family:'DM Mono',monospace;outline:none;transition:border-color 0.15s;}
+    #url-input:focus{border-color:var(--tc);}
+    .url-save{padding:0.5rem 1rem;border-radius:9px;border:none;background:var(--tc);color:#0a0014;font-weight:800;font-size:0.8rem;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+    .url-save:hover{opacity:0.85;}
+    .embed-wrap{flex:1;max-width:900px;width:100%;margin:0 auto;padding:0 2rem 2rem;display:flex;flex-direction:column;}
+    iframe#doc-frame{flex:1;min-height:72vh;border:none;border-radius:14px;border:1px solid var(--tc-border);background:#fff;}
+    .placeholder{flex:1;min-height:60vh;border-radius:14px;border:1.5px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center;padding:3rem 2rem;}
+    .placeholder svg{opacity:0.25;}.placeholder h3{font-size:1.1rem;font-weight:700;color:var(--text);opacity:0.6;}.placeholder p{font-size:0.82rem;color:var(--muted);max-width:320px;line-height:1.55;}
+    .bottom-nav{border-top:1px solid var(--border);padding:1.25rem 2rem;display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto;width:100%;}
+    .bn-link{display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;text-decoration:none;color:var(--muted);transition:color 0.2s;}
+    .bn-link.prev{color:#10b981;}.bn-link.home{color:#9b7fc0;}
+    @media(max-width:600px){nav{padding:0 1rem;}.track-header,.url-editor,.embed-wrap{padding-left:1rem;padding-right:1rem;}.bottom-nav{padding:1rem;}}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>All Tracks</a>
+  <span class="nav-title">Standalone</span>
+  <button class="nav-edit-btn" id="edit-btn" onclick="toggleEdit()">Edit URL</button>
+</nav>
+<div class="track-header">
+  <div class="track-header-inner">
+    <div class="th-track">Standalone &middot; Trailback Panel Members</div>
+    <div class="th-name">Vanguard Handbook</div>
+    <div class="th-role">Serve on the Trailback Panel, EMS's restorative alternative to traditional discipline. Focused on reflection, responsibility, and reconnection.</div>
+    <div class="color-bar"></div>
+  </div>
+</div>
+<div class="main">
+  <div class="url-editor" id="url-editor" style="display:none;">
+    <div class="url-row">
+      <span class="url-label">Google Doc URL</span>
+      <input id="url-input" type="url" placeholder="Paste Google Doc link here..." />
+      <button class="url-save" onclick="saveUrl()">Save</button>
+    </div>
+  </div>
+  <div class="embed-wrap">
+    <iframe id="doc-frame" style="display:none;" allowfullscreen></iframe>
+    <div class="placeholder" id="placeholder">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <h3>Handbook coming soon</h3>
+      <p>Click "Edit URL" in the nav to paste the Google Doc link for the Vanguard Handbook.</p>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <a href="../delegates/" class="bn-link prev"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8 2L3 6l5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Delegates</a>
+    <a href="../" class="bn-link home">All Tracks<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </div>
+</div>
+<script>
+  const STORAGE_KEY='mlc_vanguard_url';
+  const frame=document.getElementById('doc-frame'),placeholder=document.getElementById('placeholder'),input=document.getElementById('url-input');
+  function toEmbedUrl(url){const m=url.match(/\/d\/([a-zA-Z0-9_-]+)/);if(!m)return url;return'https://docs.google.com/document/d/'+m[1]+'/preview';}
+  function loadDoc(url){if(!url||url==='#'){frame.style.display='none';placeholder.style.display='flex';return;}frame.src=toEmbedUrl(url);frame.style.display='block';placeholder.style.display='none';}
+  function toggleEdit(){const ed=document.getElementById('url-editor');const btn=document.getElementById('edit-btn');const visible=ed.style.display!=='none';ed.style.display=visible?'none':'flex';btn.textContent=visible?'Edit URL':'Done';if(!visible)input.value=localStorage.getItem(STORAGE_KEY)||'';}
+  function saveUrl(){const val=input.value.trim();if(val){localStorage.setItem(STORAGE_KEY,val);loadDoc(val);}toggleEdit();}
+  const saved=localStorage.getItem(STORAGE_KEY);if(saved)loadDoc(saved);
+</script>
+</body>
+</html>
